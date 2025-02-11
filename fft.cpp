@@ -35,10 +35,12 @@ std::vector<vComp> fftIterative(std::vector<vComp> &f, double lambda){ //f has a
         currN = 2*currN;
     }
     if(lambda== -1){
-        std::complex<double> a = 0.25;
+        std::complex<double> a = pow(N,-1);
+        std::vector<vComp> f_new;
         for(int i{}; i < F.size();++i){
-            F[i] = a*F[i];
+            f_new.push_back(a*F[i]);
         }
+        return f_new;
     }
     
     return F;
@@ -53,14 +55,14 @@ void printVector(std::vector <vComp> F){
 
 std::vector <vComp> bitreversePermute(std::vector<vComp> &f){
     int n = f.size();
-    int logN = __builtin_ctz(n);  // log2(n) assuming n is a power of 2
+    int bitCount = __builtin_ctz(n);  // log2(n) assuming n is a power of 2
 
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) {//reversed is the new index for index i
         int reversed = 0, temp = i;
-        for (int j = 0; j < logN; ++j) {
-            reversed = (reversed << 1) | (temp & 1);
-            temp >>= 1;
-        }
+        for (int j = 0; j < bitCount; ++j) {//logN times executed
+            reversed = (reversed << 1) | (temp & 1);// 1 = 001, bit shift reversed once to the left,why?  | getting the least significant bit of temp,why? 
+            temp >>= 1;//bit shift temp to the right       make space for new bits                    collecting bits from right to left of the current index i stored in temp
+        }            //for new bit to be collected
         if (reversed > i) {
             std::swap(f[i], f[reversed]);
         }
